@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>💸 Lumicade Earn Robux (With Save) 💸</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    min-height: 100vh;
+    margin: 0;
+  }
+  h1 {
+    margin-bottom: 1rem;
+    text-shadow: 0 0 8px #000000aa;
+  }
+  #balance {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    text-shadow: 0 0 6px #000;
+  }
+  #clickButton {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border-radius: 12px;
+    border: none;
+    background-color: #ffbe0b;
+    color: #000;
+    cursor: pointer;
+    box-shadow: 0 4px 6px #cc9a00;
+    transition: transform 0.2s ease;
+    user-select: none;
+    margin-bottom: 1rem;
+  }
+  #clickButton:active {
+    transform: scale(0.95);
+  }
+  #wheelSection {
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  #wheelButton {
+    padding: 0.7rem 1.5rem;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    border: none;
+    background-color: #00c851;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 6px #007e34;
+    user-select: none;
+    margin-top: 0.5rem;
+  }
+  #wheelTimer {
+    margin-top: 0.5rem;
+    font-weight: bold;
+    text-shadow: 0 0 6px #000;
+  }
+  #notification {
+    background: #ff4444;
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    display: none;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 0 8px #aa0000;
+  }
+  #bugReportSection {
+    margin-top: 2rem;
+    width: 100%;
+    max-width: 400px;
+    background: #3b3b3b88;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 0 10px #000000bb;
+  }
+  #bugReportSection textarea {
+    width: 100%;
+    resize: vertical;
+    min-height: 60px;
+    border-radius: 8px;
+    border: none;
+    padding: 0.5rem;
+    font-size: 1rem;
+    font-family: inherit;
+    margin-bottom: 0.5rem;
+  }
+  #bugReportSection button {
+    width: 100%;
+    padding: 0.7rem;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    border: none;
+    background-color: #ff4444;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 6px #aa0000;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+
+  <h1>💸 Lumicade Robux Clicker + Wheel 💸</h1>
+
+  <div id="balance">Balance: 0.00001 Robux</div>
+
+  <button id="clickButton">Click to Earn Robux</button>
+
+  <div id="wheelSection">
+    <button id="wheelButton">Spin the Wheel (10 min cooldown)</button>
+    <div id="wheelTimer">Next spin available now!</div>
+  </div>
+
+  <div id="notification"></div>
+
+  <div id="bugReportSection">
+    <h3>Report a Bug</h3>
+    <textarea id="bugText" placeholder="Describe the bug..."></textarea>
+    <button id="bugSubmitBtn">Submit Bug Report</button>
+  </div>
+
+  <script>
+    const CLICK_REWARD = 0.00000001;  // 0.00000001000 robux per click
+    const WHEEL_COOLDOWN_MS = 10 * 60 * 1000; // 10 minutes
+    const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1391457638096568562/0A8AfTfSBv4LHsmZFMgOTcmTwMJiNbxc0Re7-NJhgjm0QGobLrjjxtHChJ0wB9J2DYFs";
+
+    // Load saved balance and last spin time or initialize
+    let balance = parseFloat(localStorage.getItem('robuxBalance')) || 0.00001;
+    let lastWheelSpin = parseInt(localStorage.getItem('lastWheelSpin')) || 0;
+
+    const balanceDiv = document.getElementById('balance');
+    const clickButton = document.getElementById('clickButton');
+    const wheelButton = document.getElementById('wheelButton');
+    const wheelTimer = document.getElementById('wheelTimer');
+    const notification = document.getElementById('notification');
+    const bugText = document.getElementById('bugText');
+    const bugSubmitBtn = document.getElementById('bugSubmitBtn');
+
+    function updateBalanceDisplay() {
+      balanceDiv.textContent = `Balance: ${balance.toFixed(8)} Robux`;
+      localStorage.setItem('robuxBalance', balance.toFixed(8));
+    }
+
+    function showNotification(msg) {
+      notification.style.display = 'block';
+      notification.textContent = msg;
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, 4000);
+    }
+
+    clickButton.addEventListener('click', () => {
+      balance += CLICK_REWARD;
+      updateBalanceDisplay();
+      if (balance >= 1) {
+        showNotification('🎉 Congratulations! You reached 1 Robux! Contact lumicade#1234 on Discord.');
+      }
+    });
+
+    function getTimeLeft() {
+      const now = Date.now();
+      const diff = lastWheelSpin + WHEEL_COOLDOWN_MS - now;
+      return diff > 0 ? diff : 0;
+    }
+
+    function formatTime(ms) {
+      const totalSeconds = Math.floor(ms / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      return `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+    }
+
+    function updateWheelTimer() {
+      const timeLeft = getTimeLeft();
+      if (timeLeft > 0) {
+        wheelTimer.textContent = `Next spin available in ${formatTime(timeLeft)}`;
+        wheelButton.disabled = true;
+      } else {
+        wheelTimer.textContent = 'Next spin available now!';
+        wheelButton.disabled = false;
+      }
+    }
+
+    wheelButton.addEventListener('click', () => {
+      const now = Date.now();
+      if (now - lastWheelSpin < WHEEL_COOLDOWN_MS) {
+        showNotification('⏳ Wheel is on cooldown, please wait.');
+        return;
+      }
+      lastWheelSpin = now;
+      localStorage.setItem('lastWheelSpin', lastWheelSpin);
+
+      const reward = (Math.random() * 0.049 + 0.001);
+      balance += reward;
+      updateBalanceDisplay();
+      showNotification(`🎉 You spun the wheel and won ${reward.toFixed(5)} Robux!`);
+
+      updateWheelTimer();
+    });
+
+    setInterval(updateWheelTimer, 1000);
+    updateWheelTimer();
+
+    bugSubmitBtn.addEventListener('click', () => {
+      const bugDescription = bugText.value.trim();
+      if (!bugDescription) {
+        alert('Please enter a bug description.');
+        return;
+      }
+      const payload = {
+        content: `🛠️ Bug report:\n${bugDescription}`
+      };
+      fetch(DISCORD_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(response => {
+        if (response.ok) {
+          showNotification('Bug report sent successfully.');
+          bugText.value = '';
+        } else {
+          alert('Failed to send bug report.');
+        }
+      }).catch(() => {
+        alert('Failed to send bug report.');
+      });
+    });
+
+    updateBalanceDisplay();
+  </script>
+
+</body>
+</html>
